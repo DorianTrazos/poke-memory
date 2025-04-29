@@ -82,27 +82,42 @@ const hideCards = () => {
 };
 
 const checkCardsSelected = card => {
-  if (card.dataset.win) return;
-  if (!cardA) cardA = card;
-  else if (!cardB) cardB = card;
-  if (!cardA || !cardB) return;
-  const pokeNumberA = cardA.dataset.pokeImage;
-  const pokeNumberB = cardB.dataset.pokeImage;
-  canPlay = false;
-  if (pokeNumberA === pokeNumberB) {
-    console.log('CORRECT');
-    cardA.dataset.win = true;
-    cardB.dataset.win = true;
-    pointsElement.textContent = `POINTS: ${(points += 100)}`;
-  } else {
-    console.log('NOP');
+  if (card.dataset.win || card === cardA || card === cardB) return;
+  if (!cardA) {
+    cardA = card;
+    return;
   }
-  setTimeout(hideCards, 500);
+  if (!cardB) {
+    cardB = card;
+  }
+
+  if (cardA && cardB) {
+    canPlay = false;
+    const pokeNumberA = cardA.dataset.pokeImage;
+    const pokeNumberB = cardB.dataset.pokeImage;
+
+    if (pokeNumberA === pokeNumberB) {
+      console.log('CORRECT');
+      cardA.dataset.win = true;
+      cardB.dataset.win = true;
+      pointsElement.textContent = `POINTS: ${(points += 100)}`;
+      setTimeout(() => {
+        hideCards();
+      }, 500);
+    } else {
+      console.log('NOP');
+      setTimeout(() => {
+        hideCards();
+      }, 1000); // Damos un poquito más de tiempo para ver el error
+    }
+  }
 };
 
 const showCard = event => {
-  const card = event.target.closest('.card'); // Buscar el ancestro que tenga la clase 'card'
-  if (!card || !canPlay) return; // Si no clicaste en un .card, nos vamos
+  if (!canPlay) return;
+
+  const card = event.target.closest('.card');
+  if (!card || card.dataset.win || card === cardA || card === cardB) return;
 
   card.classList.add('card-show');
 
