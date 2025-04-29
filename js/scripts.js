@@ -1,8 +1,12 @@
 const gameContainerElement = document.getElementById('game-container');
+const pointsElement = document.getElementById('points');
+const triesElement = document.getElementById('tries');
+const restartButtonElement = document.getElementById('button-restart');
 
 const totalCards = 12;
-
 let pokeNumbers = [];
+let tries = 0;
+let points = 0;
 
 let allCards = null;
 let cardA = null;
@@ -42,9 +46,14 @@ const createGameBoard = () => {
   gameContainerElement.append(fragment);
   allCards = gameContainerElement.querySelectorAll('.card');
   setTimeout(showAllCards, 1000);
+  tries = 0;
+  points = 0;
+  triesElement.textContent = `TRIES: ${tries}`;
+  pointsElement.textContent = `POINTS: ${points} `;
 };
 
 const getPokemonsToPlay = () => {
+  pokeNumbers = [];
   while (pokeNumbers.length < totalCards / 2) {
     const randomNumber = getRandomNumber();
     if (!pokeNumbers.includes(randomNumber)) {
@@ -71,6 +80,7 @@ const hideCards = () => {
   cardA = null;
   cardB = null;
   canPlay = true;
+  triesElement.textContent = `TRIES: ${tries++}`;
 };
 
 const checkCardsSelected = card => {
@@ -85,6 +95,7 @@ const checkCardsSelected = card => {
     console.log('CORRECT');
     cardA.dataset.win = true;
     cardB.dataset.win = true;
+    pointsElement.textContent = `POINTS: ${(points += 100)}`;
   } else {
     console.log('NOP');
   }
@@ -108,3 +119,4 @@ const showCard = event => {
 getPokemonsToPlay();
 
 gameContainerElement.addEventListener('click', showCard);
+restartButtonElement.addEventListener('click', getPokemonsToPlay);
